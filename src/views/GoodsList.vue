@@ -137,7 +137,8 @@ import axios from 'axios';
               this.page++;
               this.getGoodsList(true)
             },500)
-          }
+          },
+          setTimeout
         }
     }
 </script>
