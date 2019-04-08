@@ -19,7 +19,7 @@
                 <dt>Price:</dt>
                 <dd><a href="javascript:void(0)" :class="{'cur':priceChecked=='All'}" @click="setPriceFilter('All')">All</a></dd>
                 <dd v-for="(item,index) in priceFilter" :key=index>
-                  <a href="javascript:void(0)" @click="setPriceFilter(index)" :class="{'cur':priceChecked==index}">{{item.startPrice}} - {{item.endPrice}}</a>
+                  <a href="javascript:void(0)" @click="setPriceFilter(index,item.startPrice,item.endPrice)" :class="{'cur':priceChecked==index}">{{item.startPrice}} - {{item.endPrice}}</a>
                 </dd>
               </dl>
             </div>
@@ -36,12 +36,14 @@
                       <div class="name">{{item.productName}}</div>
                       <div class="price">{{item.salePrice}}</div>
                       <div class="btn-area">
-                        <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                        <a href="javascript:;" class="btn btn--m" @click="addCart(item.productId)">加入购物车</a>
                       </div>
                     </div>
                   </li>
                 </ul>
-                <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">加载中..</div>
+                <div class="loading" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">
+                  <img src="../assets/loading-spinning-bubbles.svg" alt="" v-show="loading">
+                </div>
               </div>
             </div>
           </div>
@@ -63,6 +65,10 @@ import axios from 'axios';
               priceFilter:[
                 {
                   startPrice:'0.00',
+                  endPrice:'100.00'
+                },
+                {
+                  startPrice:'100.00',
                   endPrice:'500.00'
                 },
                 {
@@ -70,8 +76,8 @@ import axios from 'axios';
                   endPrice:'1000.00'
                 },
                 {
-                  startPrice:'1000.00',
-                  endPrice:'2000.00'
+                  startPrice:'1000',
+                  endPrice:'2000'
                 }
               ],
               priceChecked: 'All',
@@ -80,7 +86,10 @@ import axios from 'axios';
               sortFlag:true,
               page:1,
               pageSize:8,
-              busy:true
+              busy:true,
+              loading:true,
+              startPrice:'0',
+              endPrice:'10000'
             }
         },
         components:{
@@ -96,11 +105,15 @@ import axios from 'axios';
             let params={
               page:this.page,
               pageSize:this.pageSize,
-              sort:this.sortFlag?1:-1
-            }
+              sort:this.sortFlag?1:-1,
+              startPrice:this.startPrice,
+              endPrice:this.endPrice
+            };
+            this.loading = true;
               axios.get("/goods",{
                 params:params
               }).then((res)=>{
+                this.loading = false;
                 if(flag){
                   this.goodsList = this.goodsList.concat(res.data.result.list);
                   if(res.data.result.count===0){
@@ -116,10 +129,20 @@ import axios from 'axios';
                 }
               })
           },
-          setPriceFilter(value){
+          setPriceFilter(value,startPrice,endPrice){
+            if(value!=='All'){
+              this.startPrice = startPrice;
+              this.endPrice = endPrice;
+            }else {
+              this.startPrice = '0';
+              this.endPrice = '10000';
+            }
+            console.log(this.startPrice,this.endPrice)
             this.priceChecked = value;
             this.filterBy = false;
             this.overLayFlag = false;
+            this.page=1;
+            this.getGoodsList();
           },
           setFilterPop(){
             this.filterBy = !this.filterBy;
@@ -138,7 +161,23 @@ import axios from 'axios';
               this.getGoodsList(true)
             },500)
           },
-          setaaa(){}
+          addCart(productId){
+            axios.post('/goods/addCart',{
+                productId:productId
+            }).then((res)=>{
+              let data = res.data;
+              if(data.status==="0"){
+                alert("加入成功");
+              }else {
+                alert("加入失败")
+              }
+            })
+          }
         }
     }
 </script>
+<style>
+.loading {
+  text-align: center;
+}
+</style>
