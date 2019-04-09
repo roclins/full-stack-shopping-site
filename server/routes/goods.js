@@ -16,7 +16,7 @@ mongoose.connection.on('disconnected',function(){
     console.log("MongoDB connected disconnected");
 })
 
-router.get("/",function(req,res,next){
+router.get("/list",function(req,res,next){
     //req.param获取客户端传过来的参数
     let startPrice = Number(req.param('startPrice'));
     let endPrice = Number(req.param('endPrice'));
