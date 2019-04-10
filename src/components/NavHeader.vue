@@ -36,7 +36,7 @@
             @click="loginModelFlag=true"
           >Login</a>
           <a href="javascript:void(0)" class="navbar-link" v-if="User">{{User}}</a>
-          <a href="javascript:void(0)" class="navbar-link" @click="logout">Logout</a>
+          <a href="javascript:void(0)" class="navbar-link" @click="logout" v-if="User">Logout</a>
           <div class="navbar-cart-container">
             <span class="navbar-cart-count"></span>
             <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -81,6 +81,7 @@
                   class="regi_login_input regi_login_input_left login-input-no input_text"
                   placeholder="Password"
                   v-model="userPwd"
+                  @keyup.enter="login"
                 >
               </li>
             </ul>
@@ -139,7 +140,7 @@ export default {
     },
     checkLogin() {
       axios.get("/users/checkLogin").then(res => {
-        console.log(res);
+        // console.log(res);
         let data = res.data;
         if (data.status === "0") {
           this.User = data.result

@@ -30,7 +30,7 @@ export default {
     },
     props:['mdShow'],
     mounted(){
-        console.log(this.mdShow);
+        // console.log(this.mdShow);
     },
     methods:{
         closeModel(){

@@ -66,7 +66,7 @@ router.post('/addCart',(req,res,next)=>{
     let productId = req.body.productId;
     // let productId = req.params("productId");  //produc 为 前端传过来的参数 商品的id
     // console.log(req);
-    console.log(productId);
+    // console.log(productId);
     let User = require("../models/user"); //User 会自动匹配到 users 集合
     User.findOne({userId:userId},(err,userDoc)=>{   
         //查找userId 为 userId 的那一条数据  ，userDoc 为返回来的数据
@@ -86,7 +86,7 @@ router.post('/addCart',(req,res,next)=>{
                 userDoc.cartList.forEach((item)=>{
                     //购物车存再这条数据，productNum ++ 
                     if(item.productId === productId){
-                        goodsItem:item;
+                        goodsItem=item;
                         item.productNum++
                     }
                 });
