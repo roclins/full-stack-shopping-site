@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 登录拦截 app.use 是什么
 app.use((req,res,next)=>{
-  console.log(req)
+  // console.log(req)
   if(req.cookies.userId){
     next();
   }else{

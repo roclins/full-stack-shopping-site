@@ -19,14 +19,14 @@ router.post('/login', (req, res, next) => {
   User.findOne(param, (err, doc) => {
 
     if (err) {
-      console.log("11");
+      // console.log("11");
       //res.json 返回的json格式 的数据，数据中的内容是可以自己定义的，但格式要统一
       res.json({
         status: "1",
         msg: err.message
       })
     } else {
-      console.log(1)
+      // console.log(1)
       if (doc) {
         //设置前端Cookie：把用户名保存到Cookie中，第一个是参数的name，第二个是值，第三个参数是属性，
         res.cookie("userId", doc.userId, {
@@ -116,9 +116,12 @@ router.get('/cartList', (req, res, next) => {
 router.post('/delCart', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
-  //更新数据库
+  
+  //update 更新子文档很方便
+
+  //更新数据库   第一个参数: 查询条件，第二个参数：要删除的子文档，$pull 是删除的功能，$pull中，key是要删除的项，value查询条件
   User.update({ userId: userId }, { $pull: { 'cartList': { 'productId': productId } } }, (err, doc) => {
-    if (err) {
+    if (err) {  //TODO
       res.json({
         status: '1',
         msg: err.message,
@@ -162,7 +165,7 @@ router.post('/editCart', (req, res, next) => {
 })
 
 //购物车选择全部功能
-router.post('/selectAll', (req, res, next) => {
+router.post('/selectAll', (req, res, next) => {  
   let userId = req.cookies.userId;
   let selectAll = req.body.selectAll ? '1' : '0';
   User.findOne({ userId: userId }, (err, doc) => {
@@ -197,6 +200,96 @@ router.post('/selectAll', (req, res, next) => {
 })
 })
 
+//获取地址接口
+router.get('/address',(req,res,next)=>{
+  let userId = req.cookies.userId;
+  User.findOne({userId:userId},(err,doc)=>{
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      })
+    }else{
+      if(doc){
+        res.json({
+          status:'0',
+          msg:'',
+          result:doc.addressList
+        })
+      }
+    }
+  })
+})
+
+//设置默认地址接口
+router.post('/setDefaultAddress',(req,res,next)=>{
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  if(!addressId){
+    res.json({
+      status:'1003',
+      msg:'addressId id null',
+      result:''
+    })
+    return
+  }
+  User.findOne({userId:userId},(err1,doc1)=>{
+    if (err1) {
+      res.json({
+        status: '1',
+        msg: err1.message,
+        result: ''
+      })
+    }else{
+      if(doc1){
+        doc1.addressList.forEach((item)=>{
+          if(item.addressId == addressId){
+            item.isDefault = true;
+          }else{
+            item.isDefault = false;
+          }
+        })
+        doc1.save((err2,doc2)=>{
+          if (err2) {
+            res.json({
+              status: '1',
+              msg: err2.message,
+              result: ''
+            })
+          }else{
+            res.json({
+              status:'0',
+              msg:'',
+              result:''
+            })
+          }
+        })
+      }
+    }  
+  })
+})
+
+//删除地址接口
+router.post('/delAddress',(req,res,next)=>{
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+    User.update({ userId: userId }, { $pull: { 'addressList': { 'addressId': addressId } } }, (err, doc) => {
+      if (err) { 
+        res.json({
+          status: '1',
+          msg: err.message,
+          result: ''
+        });
+      } else {
+        res.json({
+          status: '0',
+          msg: '',
+          result: 'suc'
+        });
+      }
+    })
+})
 
 
 module.exports = router;

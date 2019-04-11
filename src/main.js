@@ -8,7 +8,7 @@ import Infinite from 'vue-infinite-scroll'
 import {currency} from './util/currency.js'
 
 import './assets/css/base.css';
-// import './assets/css/checkout.css';
+import './assets/css/checkout.css';
 import './assets/css/product.css';
 
 Vue.use(Infinite)
