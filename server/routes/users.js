@@ -294,7 +294,7 @@ router.post('/delAddress', (req, res, next) => {
   })
 })
 
-//支付接口
+//订单记录接口
 router.post('/payment', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -364,4 +364,53 @@ router.post('/payment', (req, res, next) => {
   })
 })
 
+//支付成功接口
+router.get('/orderDetail',(req,res,next)=>{
+  let userId = req.cookies.userId;
+  let orderId = req.param('orderId');
+
+  User.findOne({userId:userId},(err1,user)=>{
+    if(err1){
+      res.json({
+        status:'1001',
+        msg:'找不到该用户'+err1.message,
+        result:''
+      })
+    }else{
+      if(user){
+        let orderList = user.orderList;
+        if(orderList.length>0){
+          let orderTotal;
+          orderList.forEach((item)=>{
+            if(item.orderId === orderId){
+              orderTotal = item.orderTotal;
+            }
+          })
+          if(orderTotal>0){
+            res.json({
+              status:'0',
+              msg:'',
+              result:{
+                orderId:orderId,
+                orderTotal:orderTotal
+              }
+            })
+          }else{
+            res.json({
+              status:'120002',
+              msg:'无此订单',
+              result:''
+            });
+          }
+        }else{
+          res.json({
+            status:'120001',
+            msg:'当前用户未创建订单',
+            result:''
+          });
+        }
+      }
+    }
+  })
+})
 module.exports = router;
