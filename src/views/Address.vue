@@ -177,7 +177,7 @@
             </div>
           </div>
           <div class="next-btn-wrap">
-            <router-link class="btn btn--m btn--red" :to="{path:'/orderConfirm',query:{addressId:orderAddressId}}">Next</router-link>
+            <router-link class="btn btn--m btn--red" :to="{path:'/orderlist',query:{addressId:orderAddressId}}">Next</router-link>
           </div>
         </div>
       </div>
