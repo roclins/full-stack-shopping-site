@@ -29,7 +29,7 @@ router.post('/login', (req, res, next) => {
         msg: err.message
       })
     } else {
-      // console.log(1)
+      //账号密码出错，doc会为空
       if (doc) {
         //设置前端Cookie：把用户名保存到Cookie中，第一个是参数的name，第二个是值，第三个参数是属性，
         res.cookie("userId", doc.userId, {
@@ -46,6 +46,12 @@ router.post('/login', (req, res, next) => {
           result: {
             userName: doc.userName
           }
+        })
+      }else{
+        res.json({
+          status:'1',
+          msg:'账号密码出错',
+          result:''
         })
       }
     }
@@ -137,6 +143,32 @@ router.post('/delCart', (req, res, next) => {
         result: 'suc'
       });
     }
+  })
+})
+
+//购物车商品数量
+router.get('/cartListCount',(req,res,next)=>{
+  let userId = req.cookies.userId;
+  User.findOne({userId:userId},(err,doc)=>{
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      let cartListCount = 0;
+      let cartList = doc.cartList;
+      cartList.forEach((item)=>{
+        cartListCount +=parseInt(item.productNum);
+      })
+      res.json({
+        status:'0',
+        msg:'',
+        result:cartListCount
+      })
+    }
+    
   })
 })
 

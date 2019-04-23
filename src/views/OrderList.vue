@@ -181,6 +181,7 @@ export default {
   mounted(){
     this.init();
     // this.totalPrice();
+    // console.log(this.$route.query);
   },
   components: {
     NavHeader,

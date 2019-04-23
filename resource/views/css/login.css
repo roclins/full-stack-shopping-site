@@ -8,6 +8,7 @@
   overflow: hidden;
   border:1px solid #ccc;
   padding-bottom: 0;
+  width:100%;
 }
 .regi_form_input .icon {
   display: inline-block;

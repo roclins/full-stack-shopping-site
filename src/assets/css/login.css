@@ -79,6 +79,8 @@ a {
   overflow: hidden;
   border:1px solid #ccc;
   padding-bottom: 0;
+  width: 100%;
+  display:inline-block;
 }
 .regi_form_input .icon {
   display: inline-block;
@@ -98,7 +100,7 @@ a {
   left:45px;
   top:0;
   padding: 9px 0 10px;
-  width: 270px;
+  width: 100%;
   font-size: 14px;
   zoom: 1;
   border: none;
@@ -106,10 +108,12 @@ a {
   /*height: 23px;*/
   line-height: 23px;
   background: 0 0!important;
+  display: block;
 }
 .md-title{
-  position: absolute;
-  top: 14px;
+  position: absolute; 
+  /* top: 14px; */
+  /* float: left; */
   line-height: 24px;
   padding: 8px 0;
   color: #333;

@@ -231,8 +231,13 @@ export default {
       axios.get('/users/address').then((res)=>{
         if(res.data.status == '0'){
           this.addressList = res.data.result;
+          this.addressList.forEach((item,index)=>{
+            if(item.isDefault===true){
+              this.checkIndex = index;
+            }
+          })
         }
-        console.log(this.addressList);
+        // console.log(this.addressList);
       })
     },
     expend(){

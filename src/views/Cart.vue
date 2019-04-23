@@ -166,7 +166,7 @@
     <model :mdShow="isShowDelModel" @closeModel="closeModel">
       <div slot="content">确认要删除该商品吗？</div>
       <div slot="btn">
-        <a class="btn btn--m" href="javascript:;" @click="comfirmDel">确认删除</a>
+        <a class="btn btn--m btn--red" href="javascript:;" @click="comfirmDel">确认删除</a>
         <a class="btn btn--m" href="javascript:;" @click="isShowDelModel = false">取消</a>
       </div>
     </model>
@@ -250,14 +250,24 @@ export default {
             this.init();
           }
         });
+        console.log(this.delItem);
+        this.$store.commit('updateCartCount',-this.delItem.productNum);
+        // axios.get('/users/cartListCount').then((res)=>{
+        //   if(status ==='0'){
+        //     console.log(res.data.result)
+        //     this.$router.commit('updateCartCount',res.data.result)
+        //   }
+        // })
     },
     editCart(flag, item) {
       if (flag === "minus") {
         if (item.productNum != 1) {
           item.productNum--;
+          this.$store.commit('updateCartCount',-1)
         }
       } else if (flag === "add") {
         item.productNum++;
+        this.$store.commit('updateCartCount',1)
       } else {
         item.checked = item.checked == "1" ? "0" : "1";
       }
@@ -317,5 +327,12 @@ export default {
   min-width: 30px;
   text-align: center;
 }
+
+@media screen and (max-width: 767px){
+  /* .deleButton {
+    width: 40%;
+  } */
+}
+
 </style>
 

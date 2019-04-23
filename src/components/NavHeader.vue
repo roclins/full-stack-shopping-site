@@ -38,7 +38,7 @@
           <a href="javascript:void(0)" class="navbar-link" v-if="User">{{User}}</a>
           <a href="javascript:void(0)" class="navbar-link" @click="logout" v-if="User">Logout</a>
           <div class="navbar-cart-container">
-            <span class="navbar-cart-count"></span>
+            <span class="navbar-cart-count" v-if="cartCount>0">{{cartCount}}</span>
             <router-link class="navbar-link navbar-cart-link" to="/cart">
               <svg class="navbar-cart-logo">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -51,7 +51,7 @@
     <div class="md-modal modal-msg md-modal-transition" :class="{'md-show':loginModelFlag}">
       <div class="md-modal-inner">
         <div class="md-top">
-          <div class="md-title">Login in</div>
+          <div class="md-title"></div>
           <button class="md-close" @click="loginModelFlag=false">Close</button>
         </div>
         <div class="md-content">
@@ -98,6 +98,7 @@
 <script>
 import "../assets/css/login.css";
 import axios from "axios";
+import { mapState } from 'vuex';
 export default {
   data() {
     return {
@@ -105,8 +106,17 @@ export default {
       userPwd: "",
       errorTip: false,
       loginModelFlag: false,
-      User: ""
+      // User: ""
     };
+  },
+  computed:{
+    ...mapState(['User','cartCount'])
+   /* User(){
+      return this.$store.state.User;
+    },
+    cartCount(){
+      return this.$store.state.cartCount
+    } */
   },
   methods: {
     login() {
@@ -124,7 +134,8 @@ export default {
           if (data.status === "0") {
             this.loginModelFlag = false;
             // console.log(data);
-            this.User = data.result.userName;
+            this.$store.commit('updateUser',data.result.userName);
+            this.getCartListCount();
           } else {
             this.errorTip = true;
           }
@@ -134,18 +145,27 @@ export default {
       axios.post("/users/logout").then(res => {
         let data = res.data;
         if (data.status === "0") {
-          this.User = "";
+          this.$store.commit('updateUser','');
+          this.$store.commit('initCartCount',0);
         }
       });
     },
     checkLogin() {
       axios.get("/users/checkLogin").then(res => {
-        // console.log(res);
         let data = res.data;
         if (data.status === "0") {
-          this.User = data.result
+          this.$store.commit('updateUser',data.result);
+          this.getCartListCount(); 
         }
       });
+    },
+    getCartListCount(){
+      axios.get('users/cartListCount').then((res)=>{
+        let data = res.data
+        if(data.status == '0'){
+          this.$store.commit('initCartCount',data.result);
+        }
+      })
     }
   },
   mounted() {
@@ -156,4 +176,8 @@ export default {
 
 
 <style>
+
+.md-content ul {
+  width: 100%;
+}
 </style>
